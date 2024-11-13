@@ -8,6 +8,13 @@ const {
   deleteItem,
 } = require('../controllers/itemsController');
 
+/**
+ * @swagger
+ * tags:
+ *   name: Items
+ *   description: Operations related to items in the inventory
+ */
+
 // POST: Create a new item
 router.post('/', createItem);
 

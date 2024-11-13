@@ -1,6 +1,42 @@
 const Item = require('../models/item'); // Import your Item model
 
 // Create a new item (POST)
+/**
+ * @swagger
+ * /api/items:
+ *   post:
+ *     summary: Create a new item
+ *     description: Adds a new item to the inventory.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
+ *               price:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               createdAt:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: Item created successfully
+ *       400:
+ *         description: Invalid input data
+ *       500:
+ *         description: Internal server error
+ */
 const createItem = async (req, res) => {
     const { name, description, quantity, price, category, image, createdAt } = req.body;
   
@@ -27,6 +63,40 @@ const createItem = async (req, res) => {
   };
 
 // Get all items (GET)
+/**
+ * @swagger
+ * /api/items:
+ *   get:
+ *     summary: Get all items
+ *     description: Fetches all the items available in the inventory.
+ *     responses:
+ *       200:
+ *         description: List of items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                   quantity:
+ *                     type: integer
+ *                   price:
+ *                     type: number
+ *                   category:
+ *                     type: string
+ *                   image:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date
+ *       500:
+ *         description: Internal server error
+ */
 const getItems = async (req, res) => {
   try {
     const items = await Item.find(); // Fetch all items from DB
@@ -37,6 +107,47 @@ const getItems = async (req, res) => {
 };
 
 // Get a single item by ID (GET)
+/**
+ * @swagger
+ * /api/items/{id}:
+ *   get:
+ *     summary: Get an item by ID
+ *     description: Fetch a single item by its ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the item to fetch
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Item found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 quantity:
+ *                   type: integer
+ *                 price:
+ *                   type: number
+ *                 category:
+ *                   type: string
+ *                 image:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
 const getItemById = async (req, res) => {
   try {
     const item = await Item.findById(req.params.id); // Find item by ID
@@ -50,6 +161,51 @@ const getItemById = async (req, res) => {
 };
 
 // Update an item by ID (PUT)
+/**
+ * @swagger
+ * /api/items/{id}:
+ *   put:
+ *     summary: Update an item by ID
+ *     description: Updates a specific item in the inventory.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the item to update
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
+ *               price:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               createdAt:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       200:
+ *         description: Item updated successfully
+ *       404:
+ *         description: Item not found
+ *       400:
+ *         description: Invalid data provided
+ *       500:
+ *         description: Internal server error
+ */
 const updateItem = async (req, res) => {
   try {
     const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, {
@@ -65,6 +221,27 @@ const updateItem = async (req, res) => {
 };
 
 // Delete an item by ID (DELETE)
+/**
+ * @swagger
+ * /api/items/{id}:
+ *   delete:
+ *     summary: Delete an item by ID
+ *     description: Removes a specific item from the inventory.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the item to delete
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Item deleted successfully
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Internal server error
+ */
 const deleteItem = async (req, res) => {
   try {
     const deletedItem = await Item.findByIdAndDelete(req.params.id); // Delete item by ID

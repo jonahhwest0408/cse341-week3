@@ -1,54 +1,30 @@
-// routes/userRoutes.js
-const express = require('express');
+
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const router = express.Router();
+const jwt = require('jsonwebtoken');
 
-// Get all users
-router.get('/', async (req, res) => {
+app.post('/signup', async (req, res) => {
   try {
-    const users = await User.find();
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving users', error });
-  }
-});
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-// Create a new user
-router.post('/', async (req, res) => {
-  const { name, email, password, age, address, phoneNumber, isAdmin } = req.body;
-  const newUser = new User({ name, email, password, age, address, phoneNumber, isAdmin });
-  try {
+    const newUser = new User({ email, password: hashedPassword });
     await newUser.save();
-    res.status(201).json(newUser);
+    res.status(201).send('User created');
   } catch (error) {
-    res.status(400).json({ message: 'Error creating user', error });
+    res.status(400).send('Error creating user');
   }
 });
 
-// Update a user
-router.put('/:id', async (req, res) => {
-  try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    res.status(400).json({ message: 'Error updating user', error });
-  }
-});
-
-// Delete a user
-router.delete('/:id', async (req, res) => {
-  try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
-    if (!deletedUser) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.status(200).json({ message: 'User deleted' });
-  } catch (error) {
-    res.status(400).json({ message: 'Error deleting user', error });
-  }
-});
-
-module.exports = router;
+// app.post('/login', async (req, res) => {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email });
+  
+//     if (!user) return res.status(400).send('Invalid credentials');
+    
+//     const validPassword = await bcrypt.compare(password, user.password);
+//     if (!validPassword) return res.status(400).send('Invalid credentials');
+  
+//     const token = jwt.sign({ _id: user._id }, 'your_jwt_secret');
+//     res.json({ token });
+//   });
