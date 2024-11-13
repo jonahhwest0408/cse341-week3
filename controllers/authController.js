@@ -108,4 +108,93 @@ const login = async (req, res) => {
     res.json({ message: 'Logged out successfully' });
   };
 
-module.exports = { signup, login, logout };
+/**
+ * @swagger
+ * /user/{id}:
+ *   put:
+ *     summary: Update a user's information (e.g., email or password)
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The user's unique ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User information updated successfully
+ *       400:
+ *         description: Invalid input or user not found
+ *       500:
+ *         description: Server error
+ */
+const updateUser = async (req, res) => {
+    const { id } = req.params;
+    const { email, password } = req.body;
+  
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: 'User not found' });
+      }
+  
+      if (email) user.email = email;
+      if (password) {
+        user.password = await bcrypt.hash(password, 10);
+      }
+  
+      await user.save();
+      res.status(200).json({ message: 'User updated successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  /**
+   * @swagger
+   * /user/{id}:
+   *   delete:
+   *     summary: Delete a user's account
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         description: The user's unique ID
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: User deleted successfully
+   *       400:
+   *         description: User not found
+   *       500:
+   *         description: Server error
+   */
+  const deleteUser = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(400).json({ message: 'User not found' });
+      }
+  
+      await user.remove();
+      res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+module.exports = { signup, login, logout, updateUser, deleteUser };
